@@ -78,7 +78,7 @@ repositories {
 
 dependencies {
     // Aniyomi/Tachiyomi source API — provided at runtime by the app itself.
-    compileOnly 'com.github.aniyomiorg:aniyomi-extensions-core:1.4'
+    compileOnly fileTree(dir: "$rootDir/libs", include: ['*.jar'])
 
     // HTML parsing
     implementation 'org.jsoup:jsoup:1.17.2'

@@ -44,7 +44,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "8.6"
-
+	
+	- name: Download Aniyomi core library
+        run: |
+          mkdir -p libs
+          curl -L "https://github.com/aniyomiorg/aniyomi-extensions-core/releases/download/v1.4/extensions-core-release.aar" -o libs/extensions-core.jar || \
+          curl -L "https://github.com/tachiyomiorg/tachiyomi-extensions-core/releases/download/v1.5/extensions-core-release.aar" -o libs/extensions-core.jar
       - name: Make gradlew executable
         run: |
           gradle wrapper --gradle-version 8.6
