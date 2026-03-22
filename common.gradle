@@ -78,7 +78,7 @@ repositories {
 
 dependencies {
     // Aniyomi/Tachiyomi source API — provided at runtime by the app itself.
-    compileOnly 'com.github.tachiyomiorg:tachiyomi-extensions-core:1.5'
+    compileOnly 'com.github.aniyomiorg:aniyomi-extensions-core:1.4'
 
     // HTML parsing
     implementation 'org.jsoup:jsoup:1.17.2'
