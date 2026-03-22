@@ -1,12 +1,10 @@
-// ─── Edit these 5 lines for each new extension ────────────────────────────
 ext {
-    extName       = 'MySite'           // Display name in Aniyomi
-    pkgNameSuffix = 'en.mysite'        // lang.siteslug  — must be unique
-    extClass      = '.MySite'          // Class name (dot-prefixed)
-    extVersionCode = 1                 // Bump this on every release
-    isNsfw        = false              // true adds the NSFW badge
+    extName       = 'MySite'
+    pkgNameSuffix = 'en.mysite'
+    extClass      = '.MySite'
+    extFactory    = ''
+    extVersionCode = 1
+    isNsfw        = false
 }
-// ──────────────────────────────────────────────────────────────────────────
 
-// Everything else is shared — do not edit below this line.
 apply from: "$rootDir/common.gradle"
