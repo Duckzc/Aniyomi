@@ -1,0 +1,94 @@
+// common.gradle  –  applied by every extension's build.gradle
+// Do not edit per-extension. Tweak extName / pkgNameSuffix / etc. in the
+// extension's own build.gradle instead.
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdk 34
+    namespace "eu.kanade.tachiyomi.extension.${pkgNameSuffix}"
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+
+        // Package name must be unique per extension.
+        applicationId "eu.kanade.tachiyomi.extension.${pkgNameSuffix}"
+        versionCode extVersionCode
+        versionName "1.${extVersionCode}"
+
+        manifestPlaceholders = [
+            appName   : "Aniyomi: ${extName}",
+            extClass  : extClass,
+            extFactory: extFactory ?: '',
+            nsfw      : (isNsfw ?: false) ? 1 : 0,
+        ]
+    }
+
+    signingConfigs {
+        release {
+            // Populated from environment variables set by the Actions workflow.
+            // Falls back to a throwaway debug key when env vars are absent
+            // (e.g. local debug builds).
+            def keystoreFile = file("${rootDir}/signingkey.jks")
+            if (!keystoreFile.exists()) {
+                // Use Android's built-in debug key so local `assembleDebug`
+                // always works without any secrets.
+                storeFile      = file("${System.getProperty('user.home')}/.android/debug.keystore")
+                storePassword  = "android"
+                keyAlias       = "androiddebugkey"
+                keyPassword    = "android"
+            } else {
+                storeFile      = keystoreFile
+                storePassword  = System.getenv("KEY_STORE_PASSWORD") ?: "android"
+                keyAlias       = System.getenv("KEY_ALIAS")          ?: "androiddebugkey"
+                keyPassword    = System.getenv("KEY_PASSWORD")        ?: "android"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig    signingConfigs.release
+            minifyEnabled    false
+            // Name the APK after the extension for easy identification.
+            android.applicationVariants.configureEach { variant ->
+                variant.outputs.configureEach {
+                    outputFileName = "aniyomi-${pkgNameSuffix}-v${versionName}.apk"
+                }
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Aniyomi/Tachiyomi source API — provided at runtime by the app itself.
+    compileOnly 'com.github.tachiyomiorg:tachiyomi-extensions-core:1.5'
+
+    // HTML parsing
+    implementation 'org.jsoup:jsoup:1.17.2'
+
+    // Kotlin stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    // Optional: kotlinx.serialization for JSON APIs
+    // implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
+
+    // Optional: OkHttp (already bundled in the app, declare compileOnly)
+    // compileOnly 'com.squareup.okhttp3:okhttp:4.12.0'
+}

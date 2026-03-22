@@ -1,0 +1,92 @@
+name: Build & Deploy Extensions
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Required for GitHub Pages deployment
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # ── Signing: decode the keystore secret into a file ──────────────────
+      # Set these in your repo → Settings → Secrets and variables → Actions:
+      #   SIGNING_KEY       → base64 of your .jks keystore
+      #   KEY_STORE_PASSWORD
+      #   KEY_ALIAS
+      #   KEY_PASSWORD
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > $GITHUB_WORKSPACE/signingkey.jks
+        # Falls back to a debug key automatically if the secret is absent
+        # (see common.gradle for the fallback logic)
+
+      - name: Build all extensions
+        run: ./gradlew assembleRelease
+        env:
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      # ── Collect all built APKs into a flat output/ folder ────────────────
+      - name: Collect APKs
+        run: |
+          mkdir -p output
+          find . -path "*/outputs/apk/release/*.apk" -exec cp {} output/ \;
+          ls -lh output/
+
+      # ── Generate the repo index so Aniyomi can discover extensions ───────
+      - name: Generate repo index
+        run: python3 scripts/generate_index.py output/ > output/index.min.json
+
+      # ── Upload APKs as a workflow artifact (always available) ─────────────
+      - name: Upload APKs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensions-apks
+          path: output/
+
+      # ── Deploy to GitHub Pages (your personal extension repo) ─────────────
+      # Enable Pages in repo Settings → Pages → Source: GitHub Actions
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          # After deploy, add this URL in Aniyomi:
+          # https://<your-username>.github.io/<your-repo>/index.min.json

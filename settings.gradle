@@ -1,0 +1,13 @@
+rootProject.name = 'aniyomi-extensions'
+
+// Auto-discover every extension under src/ that has a build.gradle.
+// Adding a new extension = drop a folder under src/{lang}/{Name}/, no
+// manual registration needed.
+fileTree('src').matching {
+    include '**/build.gradle'
+}.each { buildFile ->
+    def extensionPath = buildFile.parentFile.absolutePath
+        .replace(rootDir.absolutePath, '')
+        .replace(File.separator, ':')
+    include extensionPath
+}
