@@ -92,6 +92,7 @@ def main():
 
     output_dir = Path(sys.argv[1])
     apks = sorted(output_dir.glob("*.apk"))
+    print(f"Found APKs: {[a.name for a in apks]}", file=sys.stderr)
 
     if not apks:
         print("[]")  # Valid empty repo
