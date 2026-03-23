@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.extension.en.sfmcompile
+package eu.kanade.tachiyomi.animeextension.en.sfmcompile
 
 import eu.kanade.tachiyomi.animesource.model.AnimeFilter
 import eu.kanade.tachiyomi.animesource.model.AnimeFilterList

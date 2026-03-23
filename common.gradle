@@ -7,14 +7,14 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdk 34
-    namespace "eu.kanade.tachiyomi.extension.${pkgNameSuffix}"
+    namespace "eu.kanade.tachiyomi.animeextension.${pkgNameSuffix}"
 
     defaultConfig {
         minSdk 21
         targetSdk 34
 
         // Package name must be unique per extension.
-        applicationId "eu.kanade.tachiyomi.extension.${pkgNameSuffix}"
+        applicationId "eu.kanade.tachiyomi.animeextension.${pkgNameSuffix}"
         versionCode extVersionCode
         versionName "1.${extVersionCode}"
 
