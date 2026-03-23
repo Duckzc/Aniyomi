@@ -108,8 +108,15 @@ def main():
             "code":    meta["code"],
             "version": meta["version"],
             "nsfw":    meta["nsfw"],
-            # icon: omit — Aniyomi will use a default icon
-            # source: [] — per-source detail, optional for custom repos
+            "sources": [
+                {
+                    "id":   str(abs(hash(meta["pkg"])) % (10 ** 18)),
+                    "lang": meta["lang"],
+                    "name": meta["name"],
+                    "baseUrl": "",
+                    "versionId": meta["code"],
+                }
+            ],
         })
 
     print(json.dumps(index, indent=None, separators=(',', ':')))
