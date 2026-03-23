@@ -38,11 +38,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Download Aniyomi core library
+      - name: Download core library from JitPack
         run: |
           mkdir -p libs
-          curl -L "https://github.com/aniyomiorg/aniyomi-extensions-core/releases/download/v1.4/extensions-core-release.aar" -o libs/extensions-core.aar
-          cd libs && unzip extensions-core.aar classes.jar && mv classes.jar extensions-core.jar && rm extensions-core.aar && cd ..
+          curl -L "https://jitpack.io/com/github/tachiyomiorg/extensions-lib/1.5/extensions-lib-1.5.jar" -o libs/extensions-core.jar
+          ls -lh libs/
 
       - name: Generate Gradle wrapper
         uses: gradle/actions/setup-gradle@v3
