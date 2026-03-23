@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      generate_keystore:
+        description: 'Generate and print a new keystore (run once only)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -48,15 +53,23 @@ jobs:
           gradle wrapper --gradle-version 8.6
           chmod +x gradlew
 
-      - name: Decode keystore
+     - name: Decode keystore
         run: |
-          if [ -n "${{ secrets.SIGNING_KEY }}" ]; then
+          if [ "${{ inputs.generate_keystore }}" = "true" ]; then
+            keytool -genkey -v -keystore $GITHUB_WORKSPACE/signingkey.jks \
+              -alias my-ext-key -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass mypassword123 -keypass mypassword123 \
+              -dname "CN=Aniyomi, O=Extensions, C=US"
+            echo "=== COPY THIS BASE64 OUTPUT INTO SIGNING_KEY SECRET ==="
+            base64 $GITHUB_WORKSPACE/signingkey.jks
+            echo "======================================================="
+          elif [ -n "${{ secrets.SIGNING_KEY }}" ]; then
             echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > $GITHUB_WORKSPACE/signingkey.jks
           else
             keytool -genkey -v -keystore $GITHUB_WORKSPACE/signingkey.jks \
-              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass android -keypass android \
-              -dname "CN=Debug, O=Debug, C=US"
+              -alias my-ext-key -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass mypassword123 -keypass mypassword123 \
+              -dname "CN=Aniyomi, O=Extensions, C=US"
           fi
 
       - name: Build all extensions
