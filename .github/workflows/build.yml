@@ -52,6 +52,11 @@ jobs:
         run: |
           if [ -n "${{ secrets.SIGNING_KEY }}" ]; then
             echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > $GITHUB_WORKSPACE/signingkey.jks
+          else
+            keytool -genkey -v -keystore $GITHUB_WORKSPACE/signingkey.jks \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android \
+              -dname "CN=Debug, O=Debug, C=US"
           fi
 
       - name: Build all extensions
