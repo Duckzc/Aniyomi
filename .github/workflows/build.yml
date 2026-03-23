@@ -41,7 +41,8 @@ jobs:
       - name: Download Aniyomi core library
         run: |
           mkdir -p libs
-          curl -L "https://github.com/aniyomiorg/aniyomi-extensions-core/releases/download/v1.4/extensions-core-release.aar" -o libs/extensions-core.jar
+          curl -L "https://github.com/aniyomiorg/aniyomi-extensions-core/releases/download/v1.4/extensions-core-release.aar" -o libs/extensions-core.aar
+          cd libs && unzip extensions-core.aar classes.jar && mv classes.jar extensions-core.jar && rm extensions-core.aar && cd ..
 
       - name: Generate Gradle wrapper
         uses: gradle/actions/setup-gradle@v3
