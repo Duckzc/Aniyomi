@@ -53,16 +53,16 @@ jobs:
           gradle wrapper --gradle-version 8.6
           chmod +x gradlew
 
-     - name: Decode keystore
+      - name: Setup keystore
         run: |
           if [ "${{ inputs.generate_keystore }}" = "true" ]; then
             keytool -genkey -v -keystore $GITHUB_WORKSPACE/signingkey.jks \
               -alias my-ext-key -keyalg RSA -keysize 2048 -validity 10000 \
               -storepass mypassword123 -keypass mypassword123 \
               -dname "CN=Aniyomi, O=Extensions, C=US"
-            echo "=== COPY THIS BASE64 OUTPUT INTO SIGNING_KEY SECRET ==="
+            echo "=== COPY THIS INTO YOUR SIGNING_KEY SECRET ==="
             base64 $GITHUB_WORKSPACE/signingkey.jks
-            echo "======================================================="
+            echo "==============================================="
           elif [ -n "${{ secrets.SIGNING_KEY }}" ]; then
             echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > $GITHUB_WORKSPACE/signingkey.jks
           else
@@ -75,9 +75,9 @@ jobs:
       - name: Build all extensions
         run: ./gradlew assembleRelease
         env:
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_STORE_PASSWORD: mypassword123
+          KEY_ALIAS: my-ext-key
+          KEY_PASSWORD: mypassword123
 
       - name: Collect APKs
         run: |
