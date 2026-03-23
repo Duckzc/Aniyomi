@@ -53,7 +53,7 @@ def read_apk_metadata(apk_path: Path) -> dict:
     # ── Parse filename: aniyomi-en.mysite-v1.1.apk ────────────────────────
     m = re.match(r'aniyomi-([a-z]+\.[^-]+)-v([\d.]+)\.apk', apk_path.name)
     if m:
-        meta["pkg"] = f"eu.kanade.tachiyomi.extension.{m.group(1)}"
+        meta["pkg"] = f"eu.kanade.tachiyomi.animeextension.{m.group(1)}"
         meta["lang"] = m.group(1).split(".")[0]
         meta["version"] = m.group(2)
         try:
