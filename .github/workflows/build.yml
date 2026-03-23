@@ -87,9 +87,10 @@ jobs:
           name: extensions-apks
           path: output/
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to repo branch
         uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./output
+          publish_branch: repo
