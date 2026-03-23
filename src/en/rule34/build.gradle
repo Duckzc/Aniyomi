@@ -1,0 +1,10 @@
+ext {
+    extName       = 'SFM Compile'
+    pkgNameSuffix = 'en.sfmcompile'
+    extClass      = '.SFMCompile'
+    extFactory    = ''
+    extVersionCode = 1
+    isNsfw        = true
+}
+
+apply from: "$rootDir/common.gradle"
