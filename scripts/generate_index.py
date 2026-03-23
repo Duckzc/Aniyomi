@@ -101,7 +101,7 @@ def main():
     for apk in apks:
         meta = read_apk_metadata(apk)
         index.append({
-            "name":    meta["name"],
+            "name":    "Aniyomi: " + meta["name"],
             "pkg":     meta["pkg"],
             "apk":     meta["apk"],
             "lang":    meta["lang"],
@@ -110,11 +110,10 @@ def main():
             "nsfw":    meta["nsfw"],
             "sources": [
                 {
-                    "id":   str(abs(hash(meta["pkg"])) % (10 ** 18)),
-                    "lang": meta["lang"],
-                    "name": meta["name"],
+                    "id":      str(abs(hash(meta["pkg"])) % (10 ** 18)),
+                    "lang":    meta["lang"],
+                    "name":    meta["name"],
                     "baseUrl": "",
-                    "versionId": meta["code"],
                 }
             ],
         })
