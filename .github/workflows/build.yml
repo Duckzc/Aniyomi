@@ -38,13 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Download core library from JitPack
-        run: |
-          mkdir -p libs
-          curl -L "https://jitpack.io/com/github/tachiyomiorg/extensions-lib/1.5/extensions-lib-1.5.jar" -o libs/extensions-core.jar
-          ls -lh libs/
-
-      - name: Generate Gradle wrapper
+        - name: Generate Gradle wrapper
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "8.6"
